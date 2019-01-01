@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 import requests
 
@@ -22,13 +23,13 @@ class Spider:
         try:
             response = requests.get(url, headers=headers)
             if response.status_code == 200:
-                return response.text
+                return response
         except requests.ConnectionError as e:
             print(e)
-            return None
+            pass
 
-    def test(self, text):
-        result = json.loads(text)
+    def test(self, response):
+        result = json.loads(response.text)
         data = result.get('data')
         if data:
             object_list = data.get('object_list')
@@ -37,26 +38,38 @@ class Spider:
             else:
                 return True
 
-    def write_into_file(self, text):
-        result = json.dumps(
-            json.loads(text), indent=4, ensure_ascii=False)
-        if not os.path.exists(DIST_DIR):
-            os.makedirs(DIST_DIR)
+    def write_into_file(self, response):
+        result = json.dumps(json.loads(response.text), indent=4, ensure_ascii=False)
+        if not os.path.exists(
+                os.path.join(os.path.join(DIST_DIR, 'json'), self.kw)):
+            os.makedirs(os.path.join(os.path.join(DIST_DIR, 'json'), self.kw))
         with open(
-                'dist/result{0}.json'.format(int(self.start / 24) + 1),
+                'dist/json/{0}/{1}.json'.format(self.kw,
+                                                int(self.start / 24) + 1),
                 'w',
                 encoding='utf-8') as f:
             f.write(result)
 
 
 def main():
-    kw = 'correct'
-    for i in range(0, 360, 24):
+    print('Enter the keyowrd: ', end='')
+    kw = input()
+    # kw = 'taeyeon'
+    start = time.time()
+    counter = 0
+    for i in range(0, 3600, 24):
         spider = Spider(kw, start=i)
-        text = spider.get_html()
-        items = spider.test(text)
-        if items:
-            spider.write_into_file(text)
+        response = spider.get_html()
+        contents = spider.test(response)
+        if contents:
+            print(
+                'Downloading: {0}.json It costs {1}s'.format(
+                    str(i // 24 + 1), str(time.time() - start)),)
+            spider.write_into_file(response)
+            counter += 1
+        else:
+            break
+    print('Get {0}. It costs {1}s'.format(counter, str(time.time() - start)))
 
 
 if __name__ == '__main__':

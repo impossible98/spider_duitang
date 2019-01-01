@@ -5,11 +5,11 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
-yapf = "*"
-jupyter = "*"
+autopep8 = "*"
 
 [packages]
 requests = "*"
+scrapy = "*"
 
 [requires]
 python_version = "3.7"
