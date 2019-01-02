@@ -23,13 +23,13 @@ class Spider:
         try:
             response = requests.get(url, headers=headers)
             if response.status_code == 200:
-                return response
+                return response.text
         except requests.ConnectionError as e:
             print(e)
             pass
 
     def test(self, response):
-        result = json.loads(response.text)
+        result = json.loads(response)
         data = result.get('data')
         if data:
             object_list = data.get('object_list')
@@ -39,7 +39,7 @@ class Spider:
                 return True
 
     def write_into_file(self, response):
-        result = json.dumps(json.loads(response.text), indent=4, ensure_ascii=False)
+        result = json.dumps(json.loads(response), indent=4, ensure_ascii=False)
         if not os.path.exists(
                 os.path.join(os.path.join(DIST_DIR, 'json'), self.kw)):
             os.makedirs(os.path.join(os.path.join(DIST_DIR, 'json'), self.kw))
@@ -52,16 +52,16 @@ class Spider:
 
 
 def main():
-    print('Enter the keyowrd: ', end='')
-    kw = input()
-    # kw = 'taeyeon'
+    # print('Enter the keyowrd: ', end='')
+    # kw = input()
+    kw = 'taeyeon'
     start = time.time()
     counter = 0
     for i in range(0, 3600, 24):
         spider = Spider(kw, start=i)
         response = spider.get_html()
-        contents = spider.test(response)
-        if contents:
+        items = spider.test(response)
+        if items:
             print(
                 'Downloading: {0}.json It costs {1}s'.format(
                     str(i // 24 + 1), str(time.time() - start)),)

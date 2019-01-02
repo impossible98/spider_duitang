@@ -23,18 +23,18 @@ class Spider(get_json_requests.Spider):
             if not object_list:
                 return []
             else:
-                for item in object_list:
-                    contents = {}
-                    photo = item.get('photo')
+                for i in object_list:
+                    items = {}
+                    photo = i.get('photo')
                     if photo:
                         path = photo.get('path')
                         if path:
-                            contents['path'] = path
-                    yield contents
+                            items['path'] = path
+                    yield items
 
-    def get_html_2(self, content):
+    def get_html_2(self, item):
         try:
-            url = content.get('path')
+            url = item.get('path')
             if 'gif_jpeg' in url:
                 response = requests.get(url[:-5])
                 if response.status_code == 200:
@@ -95,17 +95,17 @@ def main():
     # kw = 'taeyeon'
     start = time.time()
     counter = 0
-    for i in range(0, 960, 24):
+    for i in range(0, 3600, 24):
         spider = Spider(kw, start=i)
         response = spider.get_html()
-        contents = spider.test(response)
-        if contents:
-            for content in contents:
-                format, response = spider.get_html_2(content)
+        items = spider.test(response)
+        if items:
+            for item in items:
+                format, response = spider.get_html_2(item)
                 if format == 'gif':
-                    print('Downloading: {0} It costs {1}s.'.format(content['path'][:-5], time.time() - start))
+                    print('Downloading: {0} It costs {1}s.'.format(item['path'][:-5], time.time() - start))
                 else:
-                    print('Downloading: {0} It costs {1}s.'.format(content['path'], time.time() - start))
+                    print('Downloading: {0} It costs {1}s.'.format(item['path'], time.time() - start))
                 counter += 1
                 spider.write_into_file(format, response)
     print('Get {0}. It costs {1}s'.format(counter, str(time.time() - start)))

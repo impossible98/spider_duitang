@@ -10,6 +10,9 @@ autopep8 = "*"
 [packages]
 requests = "*"
 scrapy = "*"
+aiohttp = "*"
+aiofiles = "*"
+beautifulsoup4 = "*"
 
 [requires]
 python_version = "3.7"
