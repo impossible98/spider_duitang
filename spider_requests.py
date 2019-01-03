@@ -4,16 +4,30 @@ import time
 from hashlib import md5
 
 import requests
-import json_requests
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DIST_DIR = os.path.join(BASE_DIR, 'dist')
 
 
-class Spider(json_requests.Spider):
+class Spider:
     def __init__(self, kw, start=0):
         self.kw = kw
         self.start = start
+
+    def get_html(self):
+        url = 'https://www.duitang.com/napi/blog/list/by_search/?kw={0}&type=feed&include_fields=top_comments%2Cis_root%2Csource_link%2Citem%2Cbuyable%2Croot_id%2Cstatus%2Clike_count%2Clike_id%2Csender%2Calbum%2Creply_count%2Cfavorite_blog_id&_type=&start={1}'.format(
+            self.kw, self.start)
+        headers = {
+            'User-Agent':
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
+        }
+        try:
+            response = requests.get(url, headers=headers)
+            if response.status_code == 200:
+                return response.text
+        except requests.ConnectionError as e:
+            print(e)
+            pass
 
     def test(self, response):
         result = json.loads(response)
@@ -21,7 +35,7 @@ class Spider(json_requests.Spider):
         if data:
             object_list = data.get('object_list')
             if not object_list:
-                return []
+                return None
             else:
                 for i in object_list:
                     items = {}
@@ -94,9 +108,9 @@ class Spider(json_requests.Spider):
 
 
 def main():
-    print('Enter the keyowrd: ', end='')
-    kw = input()
-    # kw = 'taeyeon'
+    # print('Enter the keyowrd: ', end='')
+    # kw = input()
+    kw = 'correct'
     start = time.time()
     counter = 0
     for i in range(0, 3600, 24):
@@ -114,6 +128,8 @@ def main():
                         item['path'], time.time() - start))
                 counter += 1
                 spider.write_into_file(format, response)
+        else:
+            break
     print('Get {0}. It costs {1}s'.format(counter, str(time.time() - start)))
 
 

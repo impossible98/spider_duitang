@@ -34,7 +34,7 @@ class Spider:
         if data:
             object_list = data.get('object_list')
             if not object_list:
-                return None
+                return False
             else:
                 return True
 
@@ -44,8 +44,7 @@ class Spider:
                 os.path.join(os.path.join(DIST_DIR, 'json'), self.kw)):
             os.makedirs(os.path.join(os.path.join(DIST_DIR, 'json'), self.kw))
         with open(
-                'dist/json/{0}/{1}.json'.format(self.kw,
-                                                int(self.start / 24) + 1),
+                'dist/json/{0}/{1}.json'.format(self.kw, self.start // 24 + 1),
                 'w',
                 encoding='utf-8') as f:
             f.write(result)
@@ -62,10 +61,10 @@ def main():
         response = spider.get_html()
         items = spider.test(response)
         if items:
+            spider.write_into_file(response)
             print(
                 'Downloading: {0}.json It costs {1}s'.format(
                     str(i // 24 + 1), str(time.time() - start)),)
-            spider.write_into_file(response)
             counter += 1
         else:
             break

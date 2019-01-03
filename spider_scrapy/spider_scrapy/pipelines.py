@@ -7,5 +7,9 @@
 
 
 class SpiderScrapyPipeline(object):
+    def __init__(self):
+        self.file = open('data.json', 'w', encoding='utf-8')
+
     def process_item(self, item, spider):
+        self.file.write(item.get('result'))
         return item
