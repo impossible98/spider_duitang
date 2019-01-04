@@ -15,14 +15,20 @@ class Spider:
         self.start = start
 
     def get_html(self):
-        url = 'https://www.duitang.com/napi/blog/list/by_search/?kw={0}&type=feed&include_fields=top_comments%2Cis_root%2Csource_link%2Citem%2Cbuyable%2Croot_id%2Cstatus%2Clike_count%2Clike_id%2Csender%2Calbum%2Creply_count%2Cfavorite_blog_id&_type=&start={1}'.format(
-            self.kw, self.start)
+        url = 'https://www.duitang.com/napi/blog/list/by_search/?'
+        params = {
+            'kw': self.kw,
+            'type': 'feed',
+            'include_fields': 'top_comments%2Cis_root%2Csource_link%2Citem%2Cbuyable%2Croot_id%2Cstatus%2Clike_count%2Clike_id%2Csender%2Calbum%2Creply_count%2Cfavorite_blog_id',
+            '_type': '',
+            'start': self.start
+        }
         headers = {
             'User-Agent':
             'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
         }
         try:
-            response = requests.get(url, headers=headers)
+            response = requests.get(url, params=params, headers=headers)
             if response.status_code == 200:
                 return response.text
         except requests.ConnectionError as e:
