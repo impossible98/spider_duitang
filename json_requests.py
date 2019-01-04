@@ -60,21 +60,22 @@ def main():
     # print('Enter the keyowrd: ', end='')
     # kw = input()
     kw = 'correct'
-    start = time.time()
+    start_time = time.time()
     counter = 0
-    for i in range(0, 3600, 24):
-        spider = Spider(kw, start=i)
+    for start in range(0, 3600, 24):
+        spider = Spider(kw, start=start)
         response = spider.get_html()
         items = spider.test(response)
         if items:
             spider.write_into_file(response)
             print(
                 'Downloading: {0}.json It costs {1}s'.format(
-                    str(i // 24 + 1), str(time.time() - start)),)
+                    str(start // 24 + 1), str(time.time() - start_time)),)
             counter += 1
         else:
             break
-    print('Get {0}. It costs {1}s'.format(counter, str(time.time() - start)))
+    print('Get {0}. It costs {1}s'.format(
+        counter, str(time.time() - start_time)))
 
 
 if __name__ == '__main__':

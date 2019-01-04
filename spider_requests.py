@@ -52,9 +52,9 @@ class Spider:
                             items['path'] = path
                     yield items
 
-    def get_html_2(self, item):
+    def get_html_2(self, items):
         try:
-            url = item.get('path')
+            url = items.get('path')
             headers = {
                 'User-Agent':
                 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
@@ -117,10 +117,10 @@ def main():
     # print('Enter the keyowrd: ', end='')
     # kw = input()
     kw = 'correct'
-    start = time.time()
+    start_time = time.time()
     counter = 0
-    for i in range(0, 3600, 24):
-        spider = Spider(kw, start=i)
+    for start in range(0, 3600, 24):
+        spider = Spider(kw, start=start)
         response = spider.get_html()
         items = spider.test(response)
         if items:
@@ -128,15 +128,15 @@ def main():
                 format, response = spider.get_html_2(item)
                 if format == 'gif':
                     print('Downloading: {0} It costs {1}s.'.format(
-                        item['path'][:-5], time.time() - start))
+                        item['path'][:-5], time.time() - start_time))
                 else:
                     print('Downloading: {0} It costs {1}s.'.format(
-                        item['path'], time.time() - start))
+                        item['path'], time.time() - start_time))
                 counter += 1
                 spider.write_into_file(format, response)
         else:
             break
-    print('Get {0}. It costs {1}s'.format(counter, str(time.time() - start)))
+    print('Get {0}. It costs {1}s'.format(counter, str(time.time() - start_time)))
 
 
 if __name__ == '__main__':
