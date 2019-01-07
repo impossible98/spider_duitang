@@ -39,9 +39,7 @@ class Spider:
         data = result.get('data')
         if data:
             object_list = data.get('object_list')
-            if not object_list:
-                return False
-            else:
+            if object_list:
                 return True
 
     def write_into_file(self, response):

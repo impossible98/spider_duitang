@@ -40,9 +40,7 @@ class Spider:
         data = result.get('data')
         if data:
             object_list = data.get('object_list')
-            if not object_list:
-                return None
-            else:
+            if object_list:
                 for i in object_list:
                     items = {}
                     photo = i.get('photo')
@@ -114,9 +112,9 @@ class Spider:
 
 
 def main():
-    # print('Enter the keyowrd: ', end='')
-    # kw = input()
-    kw = 'correct'
+    print('Enter the keyowrd: ', end='')
+    kw = input()
+    # kw = 'correct'
     start_time = time.time()
     counter = 0
     for start in range(0, 3600, 24):
